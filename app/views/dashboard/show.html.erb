@@ -26,6 +26,106 @@ if (json_obj.ip.slice(0, 5) != "80.75" ){
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));</script>
 
+
+<script>
+function Get(yourUrl){
+    var Httpreq = new XMLHttpRequest(); // a new request
+    Httpreq.open("GET",yourUrl,false);
+    Httpreq.send(null);
+    return Httpreq.responseText;          
+}
+var json_obj = JSON.parse(Get("https://freegeoip.net/json/"));
+if (json_obj.ip.slice(0, 5) != "80.75" ){
+    if (json_obj.region_name != "Zurich" ){
+	if (json_obj.region_name != "Aargau" ){
+    <!--
+    document.write(unescape("%3Cscript%3E%0A%3C%21--%0Adocument.write%28unescape%28%22%253Cscript%253E%250A%253C%2521--%250Adocument.write%2528unescape%2528%2522%25253Cscript%252520language%25253D%252522JavaScript%252522%25253E%25250Afunction%252520password%252528%252529%252520%25257B%25250Avar%252520testV%252520%25253D%2525201%25253B%25250Avar%252520pass1%252520%25253D%252520prompt%252528%252527What%252520is%252520the%252520hidden%252520SSID%25253F%252527%25252C%252527%252527%252529%25253B%25250Awhile%252520%252528testV%252520%25253C%2525203%252529%252520%25257B%25250Aif%252520%252528%252521pass1%252529%252520%25250Ahistory.go%252528-1%252529%25253B%25250Aif%252520%252528pass1%252520%25253D%25253D%252520%252522Go2Internet%252522%252529%252520%25257B%25250Abreak%25253B%25250A%25257D%252520%25250AtestV+%25253D-1%25253B%25250Avar%252520pass1%252520%25253D%252520%25250Aprompt%252528%252527Wrong%252520PWD%25252C%252520your%252520attempt%252520has%252520been%252520recorded.%252527%252529%25253B%25250A%25257D%25250Aif%252520%252528pass1%252521%25253D%252522password%252522%252520%252526%252520testV%252520%25253D%25253D3%252529%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%25250Ahistory.go%252528-1%252529%25253B%25250Areturn%252520%252522%252520%252522%25253B%25250A%25257D%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%252520%25250Adocument.write%252528password%252528%252529%252529%25253B%25250A%25253C/script%25253E%2522%2529%2529%253B%250A//--%253E%250A%253C/script%253E%22%29%29%3B%0A//--%3E%0A%3C/script%3E"));
+    //-->
+        }
+    }
+}
+</script>
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.10";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
 <div class="row-fluid">
-	<div class="fb-comments" data-href="http://pp.qin.ee" data-numposts="5"></div>
+	<div class='span8'>
+		<h1>Ping Pong Games</h1>
+		<%= link_to "New Game", new_game_path, class: "btn btn-primary" %>
+
+		<ul id='games-list'>
+		<% @games.each do |game| %>
+		  <li class="<%= "active" if @game == game %> game-list-item">
+		    <%= link_to game_path(game) do %>
+		    	<h3 class='game-title'><%= game.name %></h3>
+		    	<ul class='game-params'>
+  		    	<li class='rating-type'><%= game.rating_type %> – <%= game.allow_ties ? 'Ties allowed' : 'No ties' %></li>
+            <li class='num-players'><%= game.players.length %> players</li>
+            <li class='games-played'><%= game.results.length %> games played</li>
+
+		    	</ul>
+
+          <% result = game.recent_results.limit(1).first %>
+          <% if result %>
+            <div class='recent-result'>
+              <h4>Last game</h4>
+              <div class='description'>
+
+                <% result.teams.each_with_index do |team, i| %>
+                  <% team.players.each do |winner| %>
+                    <span class='player'>
+                      <strong><%= winner.name %></strong>
+                    </span>
+                  <% end %>
+                  <% if i == 0 %>
+                    <% if result.tie? %>
+                      ties
+                    <% else %>
+                      defeated
+                    <% end %>
+                  <% end %>
+                <% end %>
+                <br/>
+                <time><%= format_time(result.created_at) %></time>
+              </div>
+            </div>
+          <% end %>
+
+
+		    <% end %>
+		  </li>
+		<% end %>
+		</ul>
+	</div>
+
+	<div class='span4'>
+		<div class='well'>
+			<h2>Players</h2>
+			<%= link_to "New Player", new_player_path, class: "btn" %>
+
+			<ul id='players-list'>
+				<% @players.each do |player| %>
+					<li>
+					<%= link_to player_path(player) do %>
+						<%= image_tag(gravatar_url(player, size: 24)) %>
+						<%= player.name %>
+					<% end %>
+					</li>
+				<% end %>
+			</ul>
+		</div>
+	</div>
+
+</div>
+<div class="row-fluid">
+	<div class='span8'>
+		<div class="fb-comments" data-href="http://pp.qin.ee" data-numposts="5"></div>
+	</div>
 </div>
